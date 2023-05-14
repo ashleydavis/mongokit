@@ -1,0 +1,46 @@
+{
+    "name": "typescript-template",
+    "version": "1.0.0",
+    "description": "A template for a TypeScript app. To make it easier to start a new app without having to go through all the configuration.",
+    "main": "build/index.js",
+    "types": "build/index.d.ts",
+    "scripts": {
+        "start": "node ./build/cli.js",
+        "s": "npm start",
+        "start:dev": "nodemon",
+        "sd": "npm run start:dev",
+        "clean": "rm -rf build tsconfig.tsbuildinfo",
+        "c": "npm run compile",
+        "compile": "tsc --incremental",
+        "bw": "npm run build:watch",
+        "build:watch": "tsc  --incremental --watch",
+        "prepublishOnly": "npm test && npm run clean && npm run compile",
+        "t": "npm run test",
+        "test": "jest",
+        "tw": "npm run test:watch",
+        "test:watch": "jest --watch"
+    },
+    "bin": {
+        "typescript-template-cli": "./bin/cli"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://ashleydavis@github.com/ashleydavis/typescript-template.git"
+    },
+    "keywords": [],
+    "author": "ashley@codecapers.com.au",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/ashleydavis/typescript-template/issues"
+    },
+    "homepage": "https://github.com/ashleydavis/typescript-template#readme",
+    "devDependencies": {
+        "@types/jest": "^29.5.1",
+        "@types/node": "^20.1.4",
+        "jest": "^29.5.0",
+        "nodemon": "^2.0.22",
+        "ts-jest": "^29.1.0",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.0.4"
+    }
+}
