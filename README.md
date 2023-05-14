@@ -1,6 +1,6 @@
-# typescript-template
+# mongokit
 
-A template for a TypeScript app. To make it easier to start a new app without having to go through all the configuration.
+A command line toolkit for interacting with MongoDB.
 
 [Click here to support my work](https://www.codecapers.com.au/about#support-my-work)
 
@@ -16,8 +16,8 @@ A template for a TypeScript app. To make it easier to start a new app without ha
 When you want to start a new TypeScript app:
 
 - Copy this repo
-- In `package.json`, change `typescript-template-cli` to `you-cmd-name` the name of the your cli program (once installed on a user's computer). 
-- Across the whole repo, search and replace `typescript-template` to `your-module-name`.
+- In `package.json`, change `mongokit-cli` to `you-cmd-name` the name of the your cli program (once installed on a user's computer). 
+- Across the whole repo, search and replace `mongokit` to `your-module-name`.
 - Install your own custom dependencies
 - Add your custom code.
 - Comit it all to your own repo.
