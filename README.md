@@ -1,135 +1,55 @@
 # mongokit
 
-TODO.
-
 A command line toolkit for interacting with MongoDB.
 
 [Click here to support my work](https://www.codecapers.com.au/about#support-my-work)
 
-## Features
-
-- Example module.
-- Example command line app (installable via npm install -g)
-- Testing using Jest.
-- Debugging setup for VS Code.
-
-## Usage
-
-When you want to start a new TypeScript app:
-
-- Copy this repo
-- In `package.json`, change `mongokit-cli` to `you-cmd-name` the name of the your cli program (once installed on a user's computer). 
-- Across the whole repo, search and replace `mongokit` to `your-module-name`.
-- Install your own custom dependencies
-- Add your custom code.
-- Comit it all to your own repo.
-- If necessary, publish to npm using `npm publish`.
-
-You now have a reusable code module and/or command line app that you can 'npm install' and share with your team mates.
-
-## Get the code
-
-Clone or download and unpack the repo.
-
-Install local dependencies
+## Install
 
 ```bash
-cd your-module-name
-npm install
+npm install -g mongokit
 ```
 
-## Installation
+## Connect your database
 
-Once you publish you can install via npm and use it from TypeScript or JavaScript or from the command line.
+There are two options for connecting the mongokit commands to your own database.
 
-### From code
+### CLI option
 
-Import and use it (in a TypeScript file):
+Use the option `--uri` and set it to the connection string for your database when running a command.
 
-```typescript
-import { ExampleClass } from 'your-module-name';
-
-var example = new ExampleClass();
-console.log(example.returnsTrue());
-```
-
-Import and use it (from JavaScript):
-
-```javascript
-var yourModule = require('your-module-name');
-var ExampleClass = yourModule.ExampleClass;
-
-var example = new ExampleClass();
-console.log(example.returnsTrue());
-```
-
-### From command line
-
-You can also run your published module as a command line app.
-
-For example, install it globally:
+Example:
 
 ```bash
-npm install -g your-module-name
+--uri mongodb://localhost:27017
 ```
 
-Then run it:
+### Environment variable
+
+Set the environment variable `MONGO_URI` to the connection string for your database before running commands.
+
+Example:
 
 ```bash
-your-module-name-cli [args]
+export MONGO_URI=mongodb://localhost:27017
 ```
 
-## Compiling the TypeScript code
-
-Open folder in Visual Studio Code and hit Ctrl+Shift+B
-
-Or
+Or on Windows:
 
 ```bash
-cd your-module-name
-npm run compile
+set MONGO_URI=mongodb://localhost:27017
 ```
 
-## Debugging
+## Run commands
 
-- Open in Visual Studio Code.
-- Select 'Main' debug configuration.
-- Select the 'Test All' or 'Test Current' debug configuration to debug all tests or the current test file.
-- Set your breakpoints.
-- Hit F5 to run.
-
-## Build and run
-
-Compile the application:
+There is a full suite of commands you can run. Here's an example to get a whole collection as JSON data:
 
 ```bash
-npm run build
+mongokit get collection <collection-name>
 ```
 
-The run the compiled JavaScript:
+To see the full list of commands to get and set data:
 
 ```bash
-npm start
+mongokit --help
 ```
-
-## Running without building
-
-Run the command line app directly:
-
-```bash
-npm start:dev
-```
-
-Run tests directly:
-
-```bash
-npm test
-```
-
-Or:
-
-```bash
-npm run test:watch
-```
-
-See package.json for more scripts!
