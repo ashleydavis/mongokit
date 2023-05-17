@@ -14,11 +14,7 @@
         "compile": "tsc --incremental",
         "bw": "npm run build:watch",
         "build:watch": "tsc  --incremental --watch",
-        "prepublishOnly": "npm test && npm run clean && npm run compile",
-        "t": "npm run test",
-        "test": "jest",
-        "tw": "npm run test:watch",
-        "test:watch": "jest --watch"
+        "prepublishOnly": "npm run clean && npm run compile"
     },
     "bin": {
         "mongokit": "./bin/cli"
