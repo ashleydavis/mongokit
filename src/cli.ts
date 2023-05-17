@@ -143,6 +143,7 @@ async function main() {
             }
             for (const document of data) {
                 const id = tryConvertMongoId(document._id);
+                delete document._id;
                 await collection.replaceOne(
                     { 
                         _id: id
