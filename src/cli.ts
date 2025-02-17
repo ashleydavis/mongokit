@@ -1,5 +1,6 @@
 const { program } = require('commander');
 const { version } = require('../package.json');
+import { isObject } from 'lodash';
 import { MongoClient, ObjectId } from 'mongodb';
 import * as chalk from 'chalk';
 import { inputData, outputData } from "datakit/build/lib/io";
@@ -8,12 +9,49 @@ import { inputData, outputData } from "datakit/build/lib/io";
 // Convert the ID to an ObjectID and if not possible just return the id.
 //
 function tryConvertMongoId(id: string) {
+
+    if (id.startsWith("oid:")) {
+        id = id.substring(4);
+    }
+
     try {
         return new ObjectId(id);
     }
     catch {
         return id;
     }
+}
+
+//
+// Serializes the document to a format for output.
+//
+function serializeDocument(document: any): any {
+    for (const [key, value] of Object.entries(document)) {
+        if (value instanceof ObjectId) {
+            document[key] = `oid:${value.toHexString()}`;
+        }
+        else if (isObject(value)) {
+            document[key] = serializeDocument(value);
+        }
+    }
+
+    return document;
+}
+
+//
+// Deserializes the document to a format to save to the database.
+//
+function deserializeDocument(document: any): any {
+    for (const [key, value] of Object.entries(document)) {
+        if (typeof value === "string" && value.startsWith("oid:")) {
+            document[key] = new ObjectId(value.substring(4));
+        }
+        else if (isObject(value)) {
+            document[key] = deserializeDocument(value);
+        }
+    }
+
+    return document;
 }
 
 async function main() {
@@ -57,9 +95,10 @@ async function main() {
             const collections = await db.listCollections().toArray();
             const output: any[] = [];
             for (const collection of collections) {
+                const documents = await db.collection(collection.name).find().toArray();
                 output.push({
                     name: collection.name,
-                    documents: await db.collection(collection.name).find().toArray(),
+                    documents: documents.map(serializeDocument),
                 });
             }
             await outputData([ outputFileName ], output);
@@ -88,7 +127,7 @@ async function main() {
             const db = client.db(databaseName);
             const collection = db.collection(collectionName);
             const documents = await collection.find().toArray();
-            await outputData([ outputFileName ], documents);
+            await outputData([ outputFileName ], documents.map(serializeDocument));
         });
 
     get.command("documents")
@@ -118,7 +157,7 @@ async function main() {
             const db = client.db(databaseName);
             const collection = db.collection<any>(collectionName);
             const document = await collection.findOne({ _id: id });
-            await outputData([ outputFileName ], document);
+            await outputData([ outputFileName ], serializeDocument(document));
         });
 
     const set = program
@@ -145,7 +184,7 @@ async function main() {
                             _id: id
                         }, 
                         { 
-                            ...document 
+                            ...deserializeDocument(document), 
                         }, 
                         { 
                             upsert: true,
@@ -175,10 +214,10 @@ async function main() {
                 delete document._id;
                 await collection.replaceOne(
                     { 
-                        _id: id
+                        _id: id,
                     }, 
                     { 
-                        ...document 
+                        ...deserializeDocument(document),
                     }, 
                     { 
                         upsert: true,
@@ -202,10 +241,10 @@ async function main() {
             const id = tryConvertMongoId(documentId);
             await collection.replaceOne(
                 { 
-                    _id: id
+                    _id: id,
                 }, 
                 { 
-                    ...data 
+                    ...deserializeDocument(data),
                 }, 
                 { 
                     upsert: true,
@@ -239,13 +278,15 @@ async function main() {
             const id = tryConvertMongoId(documentId);
             await collection.updateOne(
                 { 
-                    _id: id
+                    _id: id,
                 }, 
                 { 
-                    $set: data 
+                    $set: {
+                        ...deserializeDocument(data),
+                    },
                 }, 
                 { 
-                    upsert: !!options.upsert 
+                    upsert: !!options.upsert,
                 }
             );
         });
