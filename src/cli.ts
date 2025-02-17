@@ -126,6 +126,35 @@ async function main() {
         .alias("s")
         .description(`Adds or replaces documents in the database (${chalk.red(`wipes out documents that are being replaced`)})`);
 
+    set.command("database")
+        .alias("db")
+        .argument("<database>", "The name of the database to set")
+        .argument("[-|input-file-name]", "The input file (yaml or json) to read data from. Omit or set to a hypen (-) to read JSON data from standard input", "-")
+        .description(`Replaces an entire database in the server ${chalk.red("wipes out documents that are being replaced")}`)
+        .action(async (databaseName: string, inputFileName: string, options: any) => { 
+            const client = await connect();
+            const data = await inputData([ inputFileName ]);
+            const db = client.db(databaseName);
+            for (const collectionData of data) {
+                const colllection = db.collection<any>(collectionData.name);
+                for (const document of collectionData.documents) {
+                    const id = tryConvertMongoId(document._id);
+                    delete document._id;
+                    await colllection.replaceOne(
+                        { 
+                            _id: id
+                        }, 
+                        { 
+                            ...document 
+                        }, 
+                        { 
+                            upsert: true,
+                        }
+                    );
+                }               
+            }
+        });
+
     set.command("collection")
         .alias("col")
         .option("--drop", "Drops the collection before setting documents", false)

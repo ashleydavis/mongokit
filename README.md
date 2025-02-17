@@ -53,3 +53,18 @@ To see the full list of commands to get and set data:
 ```bash
 mongokit --help
 ```
+
+## Run commands in development
+
+Clone the repo and then install dependencies:
+
+```bash
+cd mongokit
+npm install
+```
+
+Run commands:
+
+```bash
+npx ts-node src/cli.ts get dbs
+```
